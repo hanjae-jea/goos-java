@@ -1,6 +1,8 @@
 package com.example.goos;
 
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import static java.lang.String.format;
 
 import javax.swing.JFrame;
@@ -27,6 +29,8 @@ public class Main {
     public static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
 
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
+    public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d";
+    public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 
     @SuppressWarnings("unused") private Chat notTobeGCd;
 
@@ -61,6 +65,7 @@ public class Main {
     }
 
     private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
+        disconnectWhenUICloses(connection);
         final Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), new MessageListener() {
             @Override
             public void processMessage(Chat chat, Message message) {
@@ -71,7 +76,18 @@ public class Main {
         });
         this.notTobeGCd = chat;
 
-        chat.sendMessage(new Message());
+        chat.sendMessage(JOIN_COMMAND_FORMAT);
+    }
+
+    
+
+    private void disconnectWhenUICloses(final XMPPConnection connection) {
+        ui.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                connection.disconnect();
+            }
+        });
     }
 
     private void startUserInterface() throws Exception {
@@ -87,6 +103,7 @@ public class Main {
         public static final String STATUS_LOST = "lost";
 
         public static final String SNIPER_STATUS_NAME = "sniper status";
+        public static final String STATUS_BIDDING = "bidding";
         private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
         public MainWindow() {

@@ -4,13 +4,13 @@ import javax.swing.SwingUtilities;
 
 import com.example.goos.AuctionSniperDriver;
 import com.example.goos.Main;
-import static com.example.goos.Main.MainWindow.STATUS_JOINING;
-import static com.example.goos.Main.MainWindow.STATUS_LOST;
+import com.example.goos.Main.MainWindow;
 
 import static e2e.FakeAuctionServer.XMPP_HOSTNAME;
 
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
+    public static final String SNIPER_XMPP_ID = "sniper@localhost/Auction";
     public static final String SNIPER_PASSWORD = "sniper";
     
     private AuctionSniperDriver driver;
@@ -31,11 +31,11 @@ public class ApplicationRunner {
         makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock();
 
         driver = new AuctionSniperDriver(1000);
-        driver.showSniperStatus(STATUS_JOINING);
+        driver.showSniperStatus(MainWindow.STATUS_JOINING);
     }
 
     public void showsSniperHasLostAuction() {
-        driver.showSniperStatus(STATUS_LOST);
+        driver.showSniperStatus(MainWindow.STATUS_LOST);
     }
 
     public void stop() {
@@ -51,4 +51,8 @@ public class ApplicationRunner {
       throw new AssertionError(e);
     }
   }
+
+    public void hasShownSniperIsBidding() {
+        driver.showSniperStatus(MainWindow.STATUS_BIDDING);
+    }
 }
