@@ -12,7 +12,7 @@ public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_XMPP_ID = "sniper@localhost/Auction";
     public static final String SNIPER_PASSWORD = "sniper";
-    
+
     private AuctionSniperDriver driver;
 
     public void startBiddingIn(final FakeAuctionServer auction) {
@@ -45,14 +45,23 @@ public class ApplicationRunner {
     }
 
     private void makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock() {
-    try {
-      SwingUtilities.invokeAndWait(() -> {});
-    } catch (Exception e) {
-      throw new AssertionError(e);
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+            });
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
-  }
 
     public void hasShownSniperIsBidding() {
         driver.showSniperStatus(MainWindow.STATUS_BIDDING);
+    }
+
+    public void hasShownSniperIsWinning() {
+        driver.showSniperStatus(MainWindow.STATUS_WINNING);
+    }
+
+    public void showsSniperHasWonAuction() {
+        driver.showSniperStatus(MainWindow.STATUS_WINNING);
     }
 }
