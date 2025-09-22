@@ -18,6 +18,7 @@ import static com.example.goos.Main.MainWindow.SNIPER_STATUS_NAME;
 import static com.example.goos.Main.MainWindow.STATUS_BIDDING;
 import static com.example.goos.Main.MainWindow.STATUS_LOST;
 import static com.example.goos.Main.MainWindow.STATUS_WINNING;
+import static com.example.goos.Main.MainWindow.STATUS_WON;
 
 public class Main {
     private static final int ARG_HOSTNAME = 0;
@@ -118,6 +119,11 @@ public class Main {
             });
         }
 
+        @Override
+        public void sniperWon() {
+            showStatus(STATUS_WON);
+        }
+
     }
 
     public static class XMPPAuction implements Auction {
@@ -151,6 +157,7 @@ public class Main {
         public static final String STATUS_JOINING = "joining";
         public static final String STATUS_LOST = "lost";
         public static final String STATUS_WINNING = "winning";
+        public static final String STATUS_WON = "won";
 
         public static final String SNIPER_STATUS_NAME = "sniper status";
         public static final String STATUS_BIDDING = "bidding";
