@@ -15,6 +15,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
 import static com.example.goos.Main.MainWindow.SNIPER_STATUS_NAME;
+import static com.example.goos.Main.MainWindow.STATUS_BIDDING;
 import static com.example.goos.Main.MainWindow.STATUS_LOST;
 
 public class Main implements SniperListener {
@@ -65,9 +66,23 @@ public class Main implements SniperListener {
 
     private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
         disconnectWhenUICloses(connection);
-        final Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), new AuctionMessageTranslator(new AuctionSniper(this)));
-        chat.sendMessage(JOIN_COMMAND_FORMAT);
+        final Chat chat = connection.getChatManager().createChat(
+            auctionId(itemId, connection), null);
         this.notTobeGCd = chat;
+
+        Auction auction = new Auction() {
+            @Override
+            public void bid(int amount) {
+                try {
+                    chat.sendMessage(format(BID_COMMAND_FORMAT, amount));
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        
+        chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(auction, this)));
+        chat.sendMessage(JOIN_COMMAND_FORMAT);
     }
 
     
@@ -117,6 +132,16 @@ public class Main implements SniperListener {
             public void run() {
                 ui.showStatus(STATUS_LOST);
             } 
+        });
+    }
+
+    @Override
+    public void sniperBidding() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ui.showStatus(STATUS_BIDDING);
+            }
         });
     }
 }
