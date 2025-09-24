@@ -3,7 +3,7 @@ package com.example.goos;
 public interface SniperListener {
     void sniperLost();
 
-    void sniperBidding();
+    void sniperBidding(SniperState state);
 
     void sniperWinning();
 
