@@ -13,9 +13,12 @@ public class ApplicationRunner {
     public static final String SNIPER_XMPP_ID = "sniper@localhost/Auction";
     public static final String SNIPER_PASSWORD = "sniper";
 
+    private String itemId;
+
     private AuctionSniperDriver driver;
 
     public void startBiddingIn(final FakeAuctionServer auction) {
+        itemId = auction.getItemId();
         Thread thread = new Thread("Test Application") {
             @Override
             public void run() {
@@ -53,15 +56,20 @@ public class ApplicationRunner {
         }
     }
 
-    public void hasShownSniperIsBidding() {
-        driver.showSniperStatus(MainWindow.STATUS_BIDDING);
+    /**
+     * 
+     * @param lastPrice 최종 가격 = 현재 최고 입찰액
+     * @param lastBid 다음 입찰액
+     */
+    public void hasShownSniperIsBidding(int lastPrice, int lastBid) {
+        driver.showSniperStatus(itemId, lastPrice, lastBid, MainWindow.STATUS_BIDDING);
     }
 
-    public void hasShownSniperIsWinning() {
-        driver.showSniperStatus(MainWindow.STATUS_WINNING);
+    public void hasShownSniperIsWinning(int winningBid) {
+        driver.showSniperStatus(itemId, winningBid, winningBid, MainWindow.STATUS_WINNING);
     }
 
-    public void showsSniperHasWonAuction() {
-        driver.showSniperStatus(MainWindow.STATUS_WINNING);
+    public void showsSniperHasWonAuction(int lastPrice) {
+        driver.showSniperStatus(itemId, lastPrice, lastPrice, MainWindow.STATUS_WINNING);
     }
 }

@@ -9,6 +9,7 @@ import com.example.goos.Auction;
 import com.example.goos.AuctionEventListener;
 import com.example.goos.AuctionSniper;
 import com.example.goos.SniperListener;
+import com.example.goos.SniperState;
 
 @RunWith(JMock.class)
 public class AuctionSniperTest {
@@ -17,6 +18,8 @@ public class AuctionSniperTest {
     private final Auction auction = context.mock(Auction.class);
     private final AuctionSniper sniper = new AuctionSniper(auction, sniperListener);
     private final States sniperState = context.states("sniper");
+
+    private static final String ITEM_ID = "ITEM_ID";
 
     @Test public void reportsLostWhenAuctionClosesImmediately() {
         context.checking(new Expectations() {{
@@ -29,9 +32,10 @@ public class AuctionSniperTest {
     @Test public void bidsHigherAndReportsBiddingWhenNewPriceArrives() {
         final int price = 1001;
         final int increment = 25;
+        final int bid = price + increment;
         context.checking(new Expectations() {{
-            one(auction).bid(price + increment);
-            atLeast(1).of(sniperListener).sniperBidding();
+            one(auction).bid(bid);
+            atLeast(1).of(sniperListener).sniperBidding(new SniperState(ITEM_ID, price, bid));
         }});
 
         sniper.currentPrice(price, increment, AuctionEventListener.PriceSource.FromOtherBidder);
@@ -48,7 +52,7 @@ public class AuctionSniperTest {
     @Test public void reportsLostIfAuctionColsesWhenBidding() {
         context.checking(new Expectations() {{
             ignoring(auction);
-            allowing(sniperListener).sniperBidding(); then(sniperState.is("bidding"));
+            allowing(sniperListener).sniperBidding(new SniperState(ITEM_ID, 123, 123+45)); then(sniperState.is("bidding"));
             atLeast(1).of(sniperListener).sniperLost(); when(sniperState.is("bidding"));
         }});
 

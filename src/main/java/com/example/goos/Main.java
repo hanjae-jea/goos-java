@@ -105,8 +105,7 @@ public class Main {
         }
 
         @Override
-        public void sniperBidding() {
-            showStatus(STATUS_BIDDING);
+        public void sniperBidding(SniperState sniperState) {
         }
 
         @Override
