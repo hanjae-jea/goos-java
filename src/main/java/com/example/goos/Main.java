@@ -78,7 +78,10 @@ public class Main {
 
         Auction auction = new XMPPAuction(chat);
         
-        chat.addMessageListener(new AuctionMessageTranslator(connection.getUser(), new AuctionSniper(auction, new SniperStateDisplayer())));
+        chat.addMessageListener(new AuctionMessageTranslator(
+            connection.getUser(), 
+            new AuctionSniper(auction, itemId, new SniperStateDisplayer()))
+        );
         auction.join();
     }
 
@@ -105,19 +108,13 @@ public class Main {
         }
 
         @Override
-        public void sniperBidding(SniperState sniperState) {
+        public void sniperStateChanged(SniperSnapshot snapshot) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    ui.sniperStausChanged(sniperState, STATUS_BIDDING);
+                    ui.sniperStausChanged(snapshot);
                 }
-                
             });
-        }
-
-        @Override
-        public void sniperWinning() {
-            showStatus(STATUS_WINNING);
         }
 
         private void showStatus(final String status) {
@@ -184,8 +181,8 @@ public class Main {
             setVisible(true);
         }
 
-        public void sniperStausChanged(SniperState sniperState, String statusText) {
-            snipers.sniperStatusChanged(sniperState, statusText);
+        public void sniperStausChanged(SniperSnapshot snapshot) {
+            snipers.sniperStatusChanged(snapshot);
         }
 
         private JTable makeSnipersTable() {

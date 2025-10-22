@@ -15,9 +15,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.example.goos.SniperState;
+import com.example.goos.SniperSnapshot;
 import com.example.goos.SnipersTableModel;
 import com.example.goos.SnipersTableModel.Column;
+import com.example.goos.SniperSnapshot.SniperState;
 
 @RunWith(JMock.class)
 public class SnipersTableModelTest {
@@ -38,11 +39,11 @@ public class SnipersTableModelTest {
             one(listener).tableChanged(with(aRowChangedEvent()));
         }});
 
-        model.sniperStatusChanged(new SniperState("item id", 555, 666), STATUS_BIDDING);
+        model.sniperStatusChanged(new SniperSnapshot("item id", 555, 666, SniperState.BIDDING));
         assertColumnEquals(Column.ITEM_IDENTIFIER, "item id");
         assertColumnEquals(Column.LAST_PRICE, 555);
         assertColumnEquals(Column.LAST_BID, 666);
-        assertColumnEquals(Column.SNIPER_STATUS, STATUS_BIDDING);
+        assertColumnEquals(Column.SNIPER_STATE, STATUS_BIDDING);
     }
 
     private void assertColumnEquals(Column column, Object expected) {
