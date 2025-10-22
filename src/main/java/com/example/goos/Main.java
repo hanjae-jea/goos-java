@@ -47,7 +47,7 @@ public class Main {
     public Main() throws Exception {
         startUserInterface();
     }
-    
+
     private static XMPPConnection connection(String hostName, String userName, String password) throws XMPPException {
         XMPPConnection connection = new XMPPConnection(hostName);
         connection.connect();
@@ -142,11 +142,12 @@ public class Main {
 
         public static final String SNIPER_STATUS_NAME = "sniper status";
         public static final String STATUS_BIDDING = "bidding";
+        public static final String APPLICATION_TITLE = "Auction Sniper";
 
         private final SnipersTableModel snipers;
 
         public MainWindow(SnipersTableModel snipers) {
-            super("Auction Sniper");
+            super(APPLICATION_TITLE);
             this.snipers = snipers;
             setName(MAIN_WINDOW_NAME);
             fillContentPane(makeSnipersTable());

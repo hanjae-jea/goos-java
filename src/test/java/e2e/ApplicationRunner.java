@@ -34,6 +34,8 @@ public class ApplicationRunner {
         makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock();
 
         driver = new AuctionSniperDriver(1000);
+        driver.hasTitle(MainWindow.APPLICATION_TITLE);
+        driver.hasColumnTitles();
         driver.showSniperStatus(MainWindow.STATUS_JOINING);
     }
 
