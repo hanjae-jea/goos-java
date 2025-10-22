@@ -3,9 +3,11 @@ package com.example.goos;
 import static org.hamcrest.Matchers.equalTo;
 
 import static com.example.goos.Main.MainWindow.SNIPER_STATUS_NAME;
+import static com.objogate.wl.swing.matcher.JLabelTextMatcher.withLabelText;
+
 import com.objogate.wl.swing.AWTEventQueueProber;
 import com.objogate.wl.swing.driver.JFrameDriver;
-import com.objogate.wl.swing.driver.JLabelDriver;
+import com.objogate.wl.swing.driver.JTableDriver;
 import com.objogate.wl.swing.gesture.GesturePerformer;
 
 public class AuctionSniperDriver extends JFrameDriver {
@@ -15,7 +17,6 @@ public class AuctionSniperDriver extends JFrameDriver {
     }
 
     public void showSniperStatus(String statusText) {
-        new JLabelDriver(this, named(SNIPER_STATUS_NAME)).hasText(equalTo(statusText));
+        new JTableDriver(this).hasCell(withLabelText(equalTo(statusText)));
     }
-
 }
