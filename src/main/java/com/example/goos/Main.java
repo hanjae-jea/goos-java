@@ -41,19 +41,13 @@ public class Main {
     @SuppressWarnings("unused") private Chat notTobeGCd;
 
 
+    private final SnipersTableModel snipers = new SnipersTableModel();
     private MainWindow ui;
 
     public Main() throws Exception {
         startUserInterface();
     }
-
-    private static JLabel createLabel(String initialText) {
-        JLabel result = new JLabel(initialText);
-        result.setName(SNIPER_STATUS_NAME);
-        result.setBorder(new LineBorder(Color.BLACK));
-        return result;
-    }
-
+    
     private static XMPPConnection connection(String hostName, String userName, String password) throws XMPPException {
         XMPPConnection connection = new XMPPConnection(hostName);
         connection.connect();
@@ -80,7 +74,7 @@ public class Main {
         
         chat.addMessageListener(new AuctionMessageTranslator(
             connection.getUser(), 
-            new AuctionSniper(auction, itemId, new SniperStateDisplayer()))
+            new AuctionSniper(auction, itemId, new SwingThreadSniperListener(snipers)))
         );
         auction.join();
     }
@@ -96,41 +90,21 @@ public class Main {
 
     private void startUserInterface() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
-            ui = new MainWindow(); 
+            ui = new MainWindow(snipers); 
         });
     }
 
-    public class SniperStateDisplayer implements SniperListener {
+    public class SwingThreadSniperListener implements SniperListener {
+        private final SnipersTableModel snipers;
 
-        @Override
-        public void sniperLost() {
-            showStatus(STATUS_LOST);
+        public SwingThreadSniperListener(SnipersTableModel snipers) { 
+            this.snipers = snipers;
         }
 
         @Override
         public void sniperStateChanged(SniperSnapshot snapshot) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ui.sniperStausChanged(snapshot);
-                }
-            });
+            snipers.sniperStatusChanged(snapshot);
         }
-
-        private void showStatus(final String status) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ui.showStatusText(status);
-                }
-            });
-        }
-
-        @Override
-        public void sniperWon() {
-            showStatus(STATUS_WON);
-        }
-
     }
 
     public static class XMPPAuction implements Auction {
@@ -168,12 +142,12 @@ public class Main {
 
         public static final String SNIPER_STATUS_NAME = "sniper status";
         public static final String STATUS_BIDDING = "bidding";
-        private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
-        private final SnipersTableModel snipers = new SnipersTableModel();
+        private final SnipersTableModel snipers;
 
-        public MainWindow() {
+        public MainWindow(SnipersTableModel snipers) {
             super("Auction Sniper");
+            this.snipers = snipers;
             setName(MAIN_WINDOW_NAME);
             fillContentPane(makeSnipersTable());
             pack();
@@ -196,11 +170,6 @@ public class Main {
             contentPane.setLayout(new BorderLayout());
 
             contentPane.add(new JScrollPane(snipersTable), BorderLayout.CENTER);
-        }
-
-        public void showStatusText(String status) {
-            snipers.setStatusText(status);
-            // sniperStatus.setText(status);
         }
     }
 }

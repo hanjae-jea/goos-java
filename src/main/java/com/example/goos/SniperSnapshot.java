@@ -4,13 +4,34 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.objogate.exception.Defect;
+
 public class SniperSnapshot {
     public enum SniperState {
-        JOINING,
-        BIDDING,
-        WINNING,
+        JOINING {
+            @Override
+            public SniperState whenAuctionClosed() {
+                return LOST;
+            }
+        },
+        BIDDING {
+            @Override
+            public SniperState whenAuctionClosed() {
+                return LOST;
+            }
+        },
+        WINNING {
+            @Override
+            public SniperState whenAuctionClosed() {
+                return WON;
+            }
+        },
         LOST,
         WON;
+
+        public SniperState whenAuctionClosed() {
+            throw new Defect("Auction is already closed");
+        }
     }
 
     public final String itemId;
@@ -52,7 +73,7 @@ public class SniperSnapshot {
         return new SniperSnapshot(itemId, price, bid, SniperState.BIDDING);
     }
 
-    public void closed() {
-        
+    public SniperSnapshot closed() {
+        return new SniperSnapshot(itemId, lastPrice, lastBid, state.whenAuctionClosed());
     }
 }
