@@ -106,6 +106,13 @@ public class Main {
 
         @Override
         public void sniperBidding(SniperState sniperState) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    ui.sniperStausChanged(sniperState, STATUS_BIDDING);
+                }
+                
+            });
         }
 
         @Override
@@ -175,6 +182,10 @@ public class Main {
             pack();
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setVisible(true);
+        }
+
+        public void sniperStausChanged(SniperState sniperState, String statusText) {
+            snipers.sniperStatusChanged(sniperState, statusText);
         }
 
         private JTable makeSnipersTable() {
